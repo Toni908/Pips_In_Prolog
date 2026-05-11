@@ -176,7 +176,7 @@
 % -------------------------------------------------------------------------------------------------------------------
 %  INTERFAZ DE USUARI
 % -------------------------------------------------------------------------------------------------------------------
-% solucio_pips(+Regions, +Peces, -Solucio)
+% solucio_pips(+Regions, +Peces, ?Solucio)
 % Predicat principal que resol el trencaclosques Pips.
 % Paràmetres:
 %   - Regions: Llista de regions del fitxer pips.pl.
