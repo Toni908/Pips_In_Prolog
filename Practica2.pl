@@ -174,7 +174,7 @@
         genera_solucio(RestaPeces, [[C1, C2]|MapaActual], Solucio).
 
 % -------------------------------------------------------------------------------------------------------------------
-%  INTERFAZ DE USUARIO
+%  INTERFAZ DE USUARI
 % -------------------------------------------------------------------------------------------------------------------
 % solucio_pips(+Regions, +Peces, -Solucio)
 % Predicat principal que resol el trencaclosques Pips.
