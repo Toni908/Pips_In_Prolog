@@ -132,12 +132,20 @@
 % -------------------------------------------------------------------------------------------------------------------
 %    SECCIO DEL GENERADOR
 % -------------------------------------------------------------------------------------------------------------------
-% coordenada_valida(-Coord)
-% Genera o verifica una coordenada [Fila, Columna] dins els límits del tauler que hem establezcut (0-8).
-% Paràmetres:
-%   - Coord: Llista [Fila, Columna].
+% coordenada_valida(+Coord, +CoordenadesValides)
 
-    coordenada_valida([F, C]) :- between(0, 3, F), between(0, 3, C).
+    coordenada_valida(Coord, CoordenadesValides) :- member(Coord, CoordenadesValides).
+
+
+% -------------------------------------------------------------------------------------------------------------------
+% obtenir_coordenades(+Regions, -Coordenades)
+% Retorna totes les coordenades existents al tauler.
+
+    obtenir_coordenades([], []).
+
+    obtenir_coordenades( [region(_, _, CoordenadesRegion)|Resta], TotesCoordenades) :-
+        obtenir_coordenades(Resta, CoordenadesResta),
+        append(CoordenadesRegion, CoordenadesResta, TotesCoordenades).
 
 %-------------------------------------------------------------------------------------------------------------------
 % casella_lliure(+Coord, +Mapa)
@@ -159,19 +167,20 @@
 %   - MapaFinal: La llista completa de posicions un cop col·locades totes les peces.
 
     % Cas base: Ja hem col·locat totes les peces.
-    genera_solucio([], Mapa, Mapa).
+    genera_solucio(_, [], Mapa, Mapa).
 
     % Cas recursiu: Cerquem lloc per a la següent peça.
-    genera_solucio([[_, _]|RestaPeces], MapaActual, Solucio) :-
-        coordenada_valida(C1),          % Triem una casella per al valor V1
-        casella_lliure(C1, MapaActual), % Mirem que no estigui ocupada
-        
-        adyacents(C1, C2),              % Han d'estar una al costat de l'altra
-        coordenada_valida(C2),          % Triem una casella per al valor V2
-        casella_lliure(C2, MapaActual), % També ha d'estar lliure
-        
-        % Si tot va bé, afegim la peça al mapa i continuem amb la resta
-        genera_solucio(RestaPeces, [[C1, C2]|MapaActual], Solucio).
+    genera_solucio(CoordenadesValides, [[_, _]|RestaPeces], MapaActual, Solucio) :-
+
+        coordenada_valida(C1, CoordenadesValides),
+        casella_lliure(C1, MapaActual),
+
+        adyacents(C1, C2),
+
+        coordenada_valida(C2, CoordenadesValides),
+        casella_lliure(C2, MapaActual),
+
+        genera_solucio( CoordenadesValides, RestaPeces, [[C1, C2]|MapaActual], Solucio).
 
 % -------------------------------------------------------------------------------------------------------------------
 %  INTERFAZ DE USUARI
@@ -183,7 +192,8 @@
 %   - Peces: Llista de peces de dominó del fitxer pips.pl.
 %   - Solucio: El mapa final amb les coordenades de cada peça.
     solucio_pips(Regions, Peces, Solucio) :-
-        genera_solucio(Peces, [], Solucio),                     % Col·loca les peces al tauler
+        obtenir_coordenades(Regions, CoordenadesValides),
+        genera_solucio(CoordenadesValides, Peces, [], Solucio),                     % Col·loca les peces al tauler
         comprova_totes_les_regions(Regions, Peces, Solucio).    % Mira si és vàlid la solucio de genera_solucio
 
 % -------------------------------------------------------------------------------------------------------------------
