@@ -1,3 +1,8 @@
+% Facil: Bastante Rapido
+% Medio: Tarda un rato, entre 20 y 60 segundos.
+% Dificil: Tarda bastante, 
+
+
 :- consult('pips.pl').
 
 % -------------------------------------------------------------------------------------------------------------------
