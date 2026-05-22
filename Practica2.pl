@@ -180,7 +180,7 @@
     % La funcio member tambien puede verificar listas de array donde solo coincida un elemento de la lista
 
 % -------------------------------------------------------------------------------------------------------------------
-% genera_solucio(+PecesRestants, +MapaActual, -MapaFinal)
+% genera_solucio(+PecesRestants, +MapaActual, ?MapaFinal)
 % Aquesta regla és la base del backtracking. S'encarrega d'anar col·locant cada peça de dominó
 % en dues coordenades que siguin adjacents i que no estiguin ocupades prèviament.
 % Paràmetres:
@@ -205,7 +205,7 @@
         genera_solucio( CoordenadesValides, RestaPeces, [[C1, C2]|MapaActual], Solucio).
 
 % -------------------------------------------------------------------------------------------------------------------
-%  INTERFAZ DE USUARI
+%  REGLES PER L'USUARI
 % -------------------------------------------------------------------------------------------------------------------
 % solucio_pips(+Regions, +Peces, ?Solucio)
 % Predicat principal que resol el trencaclosques Pips.
@@ -243,6 +243,4 @@
 comprovacio_solucion(ID, Dificultat) :-
     puzzle(ID, Dificultat, Regions, Peces, SolucioEsperada),
     solucio_pips(Regions, Peces, SolucioCalculada),
-    
-    % Comprovem si les dues solucions són idèntiques 
     SolucioEsperada = SolucioCalculada.
