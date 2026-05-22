@@ -1,6 +1,6 @@
 % Facil: Bastante Rapido
 % Medio: Tarda un rato, entre 20 y 60 segundos.
-% Dificil: Tarda bastante, 
+% Dificil: lo deje 1 hora y no consiguio un resultado, seguramente con suficiente tiempo lo consige, pero lo dejaremos como que no resuelve
 
 
 :- consult('pips.pl').
@@ -85,6 +85,18 @@
     tots_iguals([X, X | Resta]) :- tots_iguals([X | Resta]).
 
 % -------------------------------------------------------------------------------------------------------------------
+% tots_diferents(+Llista)
+% Aquesta regla verifica que tots els elements d'una llista siguin únics (cap valor repetit).
+% És essencial per a les regions de tipus 'unequal', on cap casella pot tenir el mateix número que una altra.
+% Paràmetres:
+%   - Llista: La llista de valors (pips) extrets de la regió a comprovar.
+
+    tots_diferents([]).
+    tots_diferents([X|Resta]) :- 
+        not(member(X, Resta)), 
+        tots_diferents(Resta).
+
+% -------------------------------------------------------------------------------------------------------------------
 % comprova_regio(+Regio, +Peces, +Mapa)
 % Aquí comprovarem les diferents regions depenent de l'objectiu. Com que hi ha 5 tipus
 % de regions, tindrem 5 regles diferents, un per a cada objectiu.
@@ -118,6 +130,11 @@
 
     % La regió és 'empty' (buit)
     comprova_regio(region(empty, _, _), _, _).
+
+    % La regió és 'unequal' (tots els valors han de ser diferents)
+    comprova_regio(region(unequal, _, Coordenades), Peces, Mapa) :-
+        obte_valors_regio(Coordenades, Peces, Mapa, Valors),
+        tots_diferents(Valors).
 
 % -------------------------------------------------------------------------------------------------------------------
 % comprova_totes_les_regions(+LlistaRegions, +Peces, +Mapa)
@@ -214,3 +231,18 @@
     resoldre(ID, Dificultat, Solucio) :-
         puzzle(ID, Dificultat, Regions, Peces, _), % Ignoramos la solución del archivo por ahora
         solucio_pips(Regions, Peces, Solucio).
+
+% -------------------------------------------------------------------------------------------------------------------
+% comprovacio_solucion(+ID, +Dificultat)
+% Comprova si la solució calculada pel sistema coincideix amb la 
+% solució enregistrada a la base de coneixements per a un puzle donat.
+% Paràmetres:
+%   - ID: L'identificador numèric del trencaclosques (exemple: 20250818).
+%   - Dificultat: El nivell del trencaclosques (easy, medium, hard).
+
+comprovacio_solucion(ID, Dificultat) :-
+    puzzle(ID, Dificultat, Regions, Peces, SolucioEsperada),
+    solucio_pips(Regions, Peces, SolucioCalculada),
+    
+    % Comprovem si les dues solucions són idèntiques 
+    SolucioEsperada = SolucioCalculada.
