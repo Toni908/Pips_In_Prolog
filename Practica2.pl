@@ -28,6 +28,29 @@
 %       Aixo practicament crida solucio pips, y retorna true en cas de que la solucio que genera el meu solucio_pips sigui igual que la solucio 
 %       que esta guardada.
 
+% ----------- Logica ------------------------------------------------------
+% El disseny lògic de la solució s’ha basat en separar el problema en diferents regles independents i reutilitzables.
+% Primerament, es defineixen regles bàsiques per gestionar el tauler, com ara comprovar si dues coordenades són adjacents,
+% verificar si una casella està lliure o determinar si una coordenada és vàlida dins el tauler.
+% Aquestes regles serveixen de base per construir la resta del programa.
+
+% La implementació principal segueix una estratègia de backtracking pròpia de Prolog.
+% La regla genera_solucio/4 és l’encarregada de generar possibles col·locacions de les fitxes de dominó.
+% Per a cada peça, cerca dues coordenades adjacents i lliures del tauler i hi col·loca la fitxa.
+% El procés continua recursivament fins que totes les peces han estat col·locades.
+% Si en algun moment una configuració no és vàlida, Prolog retrocedeix automàticament i prova altres alternatives.
+
+% Una vegada generada una possible solució, el programa comprova si compleix totes les restriccions del puzzle.
+% Per fer-ho, s’han implementat regles específiques per a cada tipus de regió (sum, equals, less, greater, unequal i empty).
+% Primer s’obtenen els valors presents a les coordenades de la regió i després es verifica la condició corresponent.
+% Aquest disseny modular facilita afegir nous tipus de restriccions o modificar-ne el comportament sense afectar la resta del programa.
+
+% Finalment, s’han creat predicats d’interfície per facilitar l’ús del sistema.
+% El predicat solucio_pips/3 resol directament un puzzle a partir de les regions i les peces,
+% mentre que resoldre/3 permet carregar un puzzle concret mitjançant el seu identificador i dificultat.
+% També s’ha implementat comprovacio_solucion/2 per verificar que la solució calculada coincideix
+% amb la solució oficial emmagatzemada al fitxer de dades.
+
 :- consult('pips.pl').
 
 % -------------------------------------------------------------------------------------------------------------------
