@@ -1,12 +1,37 @@
-% Facil: Bastante Rapido
-% Medio: Tarda un rato, entre 20 y 60 segundos.
-% Dificil: lo deje 1 hora y no consiguio un resultado, seguramente con suficiente tiempo lo consige, pero lo dejaremos como que no resuelve
+% Pràctica final de Llenguatges de Programació.
+% Prolog - PIPS
+% Estudiants: Antonio Garcia Font.
+% Professor: Miquel Cabot.
+% Assignatura: 21721 – Llenguatges de Programació.
+% Lliurament: primera convocatòria.
+% Fitxer del controlador principal.
 
+% ----------- Quines dificultats pot resoldre el Proyecte? -------------------------------------------------
+% Fàcil: Bastant ràpid.
+% Mitjà: Tarda una estona, entre 20 i 60 segons.
+% Difícil: Ho vaig deixar una hora i no va trobar cap resultat. Probablement ho resoldria amb prou temps, però ho considerarem com que no ho resol.
+
+% ----------- Instruccion inicials -------------------------------------------------
+% Per executar aquest proyecte, recomano tenir al mateix nivell que l'arxius pips.pl, y executar resoldre, ya que podem pasar directament la id y la difficultat
+% i ens retorna la o les solucions (ara explico), y si pasam una solucio ens diu si es certa.
+% El programa retorna multiples solucion, ya que no distingueix la simetria, es a dir, si hi ha una ficha 2|2, retornara una solucion de pos [0,1],[0,2] y una altra igual
+% pero girades [0,2],[0,1].
+
+% ----------- Funcions -------------------------------------------------
+% Hi ha 3 funcions:
+%   solucio_pips(Regions, Peces, Solucio):
+%       La funcio del enunciat, necesita regions y peces, per donar o comprobar la solucio.
+%   resoldre(ID, Dificultat, Solucio)
+%       Aquesta es la funcio que si o si hauriem de executar, li pasam la id y la dificultad del puzzle, y retorna la solucio, molt mes comode 
+%       de utilitzar que solucio_pips
+%   comprovacio_solucion(ID, Dificultat)
+%       Aixo practicament crida solucio pips, y retorna true en cas de que la solucio que genera el meu solucio_pips sigui igual que la solucio 
+%       que esta guardada.
 
 :- consult('pips.pl').
 
 % -------------------------------------------------------------------------------------------------------------------
-%    SECCIO DEL COMPROBADOR
+%    REGLES
 % -------------------------------------------------------------------------------------------------------------------
 % adyacents(+Coord1, +Coord2)
 % Regles per definir que dos casilles son adyacents:
@@ -20,15 +45,15 @@
 
 % -------------------------------------------------------------------------------------------------------------------
 % valor_en_casella(+Coord, +Peces, +Mapa, -Valor)
-% Esta regla nos dara el valor que hay en una coordenada a partir de un mapa y sus fichas
-% Esto nos servira para saber si vamos por el camino correcto para otras reglas.
-% Los dos primeros casos es para comprobar el valor, ya que tenemos fichas con dos posibles coordenadas
-% hay que comprobarlo en ambas posiciones. El tercer caso es el iterador de la lista.
-% Parametros:
-%   - Coord: La coordenada especifica a consultar.
-%   - Peces: La lista de piezas de domino disponibles.
-%   - Mapa: La lista que dice donde esta cada pieza, esta es la que vamos probando mediante backtracking
-%   - Valor: El numero que hay en la coordenada Coord.
+% Donat un mapa i les seves fitxes, retorna el valor que hi ha en una coordenada concreta.
+% Ens servirà per saber si anem pel camí correcte en altres regles.
+% Els dos primers casos comproven el valor en ambdues posicions possibles d'una fitxa,
+% ja que cada fitxa té dues coordenades. El tercer cas és l'iterador de la llista.
+% Paràmetres:
+%   - Coord: La coordenada específica a consultar.
+%   - Peces: La llista de fitxes de dominó disponibles.
+%   - Mapa: La llista que indica on està cada fitxa, és la que anem provant mitjançant backtracking.
+%   - Valor: El número que hi ha a la coordenada Coord.
 
     % 1. Buscamos en la primera pieza (CASO A)
     valor_en_casella(Coord, [[V1, _]|_], [[Coord, _]|_], V1).
@@ -87,7 +112,7 @@
 % -------------------------------------------------------------------------------------------------------------------
 % tots_diferents(+Llista)
 % Aquesta regla verifica que tots els elements d'una llista siguin únics (cap valor repetit).
-% És essencial per a les regions de tipus 'unequal', on cap casella pot tenir el mateix número que una altra.
+% Serveix per a les regions de tipus 'unequal', on cap casella pot tenir el mateix número que una altra.
 % Paràmetres:
 %   - Llista: La llista de valors (pips) extrets de la regió a comprovar.
 
@@ -128,10 +153,10 @@
         suma_llista(Valors, Suma),
         Suma > Objectiu.
 
-    % La regió és 'empty' (buit)
+    % La regió és 'empty' (da igual)
     comprova_regio(region(empty, _, _), _, _).
 
-    % La regió és 'unequal' (tots els valors han de ser diferents)
+    % La regió és 'unequal' (diferents)
     comprova_regio(region(unequal, _, Coordenades), Peces, Mapa) :-
         obte_valors_regio(Coordenades, Peces, Mapa, Valors),
         tots_diferents(Valors).
@@ -150,18 +175,22 @@
         comprova_regio(R, Peces, Mapa),
         comprova_totes_les_regions(Resta, Peces, Mapa).
 
-
-% -------------------------------------------------------------------------------------------------------------------
-%    SECCIO DEL GENERADOR
-% -------------------------------------------------------------------------------------------------------------------
 % coordenada_valida(+Coord, +CoordenadesValides)
+% Comprova que una coordenada pertany al tauler de joc.
+% Paràmetres:
+%   - Coord: La coordenada [Fila, Columna] a comprovar.
+%   - CoordenadesValides: La llista de totes les coordenades vàlides del tauler.
 
     coordenada_valida(Coord, CoordenadesValides) :- member(Coord, CoordenadesValides).
 
 
 % -------------------------------------------------------------------------------------------------------------------
 % obtenir_coordenades(+Regions, -Coordenades)
-% Retorna totes les coordenades existents al tauler.
+% Extreu totes les coordenades del tauler a partir de la llista de regions.
+% Recorre recursivament totes les regions i concatena les seves coordenades en una sola llista.
+% Paràmetres:
+%   - Regions: La llista de regions del puzle, cada una amb les seves coordenades.
+%   - Coordenades: La llista resultant amb totes les coordenades del tauler.
 
     obtenir_coordenades([], []).
 
@@ -240,7 +269,7 @@
 %   - ID: L'identificador numèric del trencaclosques (exemple: 20250818).
 %   - Dificultat: El nivell del trencaclosques (easy, medium, hard).
 
-comprovacio_solucion(ID, Dificultat) :-
-    puzzle(ID, Dificultat, Regions, Peces, SolucioEsperada),
-    solucio_pips(Regions, Peces, SolucioCalculada),
-    SolucioEsperada = SolucioCalculada.
+    comprovacio_solucion(ID, Dificultat) :-
+        puzzle(ID, Dificultat, Regions, Peces, SolucioEsperada),
+        solucio_pips(Regions, Peces, SolucioCalculada),
+        SolucioEsperada = SolucioCalculada.
