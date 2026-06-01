@@ -3,8 +3,7 @@
 % Estudiants: Antonio Garcia Font.
 % Professor: Miquel Cabot.
 % Assignatura: 21721 – Llenguatges de Programació.
-% Lliurament: primera convocatòria.
-% Fitxer del controlador principal.
+% Lliurament: Convocatoria Ordinaria
 
 % ----------- Quines dificultats pot resoldre el Proyecte? -------------------------------------------------
 % Fàcil: Bastant ràpid.
@@ -17,8 +16,8 @@
 % El programa retorna multiples solucion, ya que no distingueix la simetria, es a dir, si hi ha una ficha 2|2, retornara una solucion de pos [0,1],[0,2] y una altra igual
 % pero girades [0,2],[0,1].
 
-% ----------- Funcions -------------------------------------------------
-% Hi ha 3 funcions:
+% ----------- Predicats -------------------------------------------------
+% Hi ha 3 predicats usables:
 %   solucio_pips(Regions, Peces, Solucio):
 %       La funcio del enunciat, necesita regions y peces, per donar o comprobar la solucio.
 %   resoldre(ID, Dificultat, Solucio)
@@ -43,11 +42,10 @@
 % Una vegada generada una possible solució, el programa comprova si compleix totes les restriccions del puzzle.
 % Per fer-ho, s’han implementat regles específiques per a cada tipus de regió (sum, equals, less, greater, unequal i empty).
 % Primer s’obtenen els valors presents a les coordenades de la regió i després es verifica la condició corresponent.
-% Aquest disseny modular facilita afegir nous tipus de restriccions o modificar-ne el comportament sense afectar la resta del programa.
 
 % Finalment, s’han creat predicats d’interfície per facilitar l’ús del sistema.
-% El predicat solucio_pips/3 resol directament un puzzle a partir de les regions i les peces,
-% mentre que resoldre/3 permet carregar un puzzle concret mitjançant el seu identificador i dificultat.
+% El predicat solucio_pips/3 resol directament un puzzle a partir de les regions i les peces, no recoman utilitzarlo talment pero,
+% millor utilitzar resoldre/3 que permet carregar un puzzle concret mitjançant el seu identificador i dificultat.
 % També s’ha implementat comprovacio_solucion/2 per verificar que la solució calculada coincideix
 % amb la solució oficial emmagatzemada al fitxer de dades.
 
@@ -83,7 +81,8 @@
     % 2. Buscamos en la primera pieza (CASO B)
     valor_en_casella(Coord, [[_, V2]|_], [[_, Coord]|_], V2).
     % 3. La iteracion para buscar toda la lista
-    valor_en_casella(Coord, [_|RestaPeces], [_|RestaSol], Valor) :- valor_en_casella(Coord, RestaPeces, RestaSol, Valor).
+    valor_en_casella(Coord, [_|RestaPeces], [_|RestaSol], Valor) :- 
+        valor_en_casella(Coord, RestaPeces, RestaSol, Valor).
 
 % -------------------------------------------------------------------------------------------------------------------
 % obte_valors_regio(+LlistaCoordenades, +Peces, +Mapa, -LlistaValors)
@@ -232,10 +231,11 @@
     % La funcio member tambien puede verificar listas de array donde solo coincida un elemento de la lista
 
 % -------------------------------------------------------------------------------------------------------------------
-% genera_solucio(+PecesRestants, +MapaActual, ?MapaFinal)
+% genera_solucio(+CoordenadesValides, +PecesRestants, +MapaActual, ?MapaFinal)
 % Aquesta regla és la base del backtracking. S'encarrega d'anar col·locant cada peça de dominó
 % en dues coordenades que siguin adjacents i que no estiguin ocupades prèviament.
 % Paràmetres:
+%   - CoordenadesValides: La llista de totes les coordenades vàlides del tauler.
 %   - PecesRestants: Les fitxes que encara no hem posat al tauler.
 %   - MapaActual: La llista de posicions que portem acumulada fins ara.
 %   - MapaFinal: La llista completa de posicions un cop col·locades totes les peces.
