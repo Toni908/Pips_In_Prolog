@@ -3,6 +3,8 @@
 % Estudiants: Antonio Garcia Font.
 % Professor: Miquel Cabot.
 % Assignatura: 21721 – Llenguatges de Programació.
+% Grup: X101 | X102
+% Data: 1/06/2026
 % Lliurament: Convocatoria Ordinaria
 
 % ----------- Quines dificultats pot resoldre el Proyecte? -------------------------------------------------
