@@ -266,8 +266,8 @@
 %   - Peces: Llista de peces de dominó del fitxer pips.pl.
 %   - Solucio: El mapa final amb les coordenades de cada peça.
     solucio_pips(Regions, Peces, Solucio) :-
-        obtenir_coordenades(Regions, CoordenadesValides),
-        genera_solucio(CoordenadesValides, Peces, [], Solucio),                     % Col·loca les peces al tauler
+        obtenir_coordenades(Regions, CoordenadesValides),       % Agafa les posibles coordenades
+        genera_solucio(CoordenadesValides, Peces, [], Solucio), % Col·loca les peces al tauler
         comprova_totes_les_regions(Regions, Peces, Solucio).    % Mira si és vàlid la solucio de genera_solucio
 
 % -------------------------------------------------------------------------------------------------------------------
